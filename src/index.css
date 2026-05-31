@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-yellow: #FEF08A;
+  --color-primary-blue: #3B82F6;
+  --shadow-brutal: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-brutal-lg: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+}
+
+@layer base {
+  body {
+    @apply bg-white text-black font-sans;
+  }
+}
+
+@layer components {
+  .neo-brutal-card {
+    @apply border-4 border-black bg-white shadow-[var(--shadow-brutal)] p-6 rounded-none transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[var(--shadow-brutal-lg)];
+  }
+
+  .neo-brutal-button {
+    @apply border-4 border-black bg-primary-yellow px-6 py-2 font-bold shadow-[var(--shadow-brutal)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer;
+  }
+
+  .neo-brutal-button-blue {
+    @apply border-4 border-black bg-primary-blue text-white px-6 py-2 font-bold shadow-[var(--shadow-brutal)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer;
+  }
+}
