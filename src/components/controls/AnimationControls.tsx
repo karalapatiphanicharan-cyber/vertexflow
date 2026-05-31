@@ -1,78 +1,111 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useGraphStore } from '../../store/useGraphStore';
 import {
   Play,
   Pause,
-  SkipBack,
-  SkipForward,
-  RotateCcw
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+  FastForward,
+  Rewind
 } from 'lucide-react';
 
 export const AnimationControls: React.FC = () => {
   const {
     isPlaying,
     setIsPlaying,
-    currentStepIndex,
-    steps,
-    nextStep,
-    prevStep,
-    resetExecution,
     speed,
-    setSpeed
+    setSpeed,
+    currentStepIndex,
+    setCurrentStepIndex,
+    steps,
+    resetExecution
   } = useGraphStore();
 
+  const timerRef = useRef<number | null>(null);
+
   useEffect(() => {
-    let interval: any;
     if (isPlaying && currentStepIndex < steps.length - 1) {
-      interval = setInterval(() => {
-        nextStep();
-      }, 1000 / speed);
+      const delay = 1000 / speed;
+      timerRef.current = window.setInterval(() => {
+        setCurrentStepIndex(currentStepIndex + 1);
+      }, delay);
     } else {
-      setIsPlaying(false);
+      if (currentStepIndex >= steps.length - 1) {
+        setIsPlaying(false);
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
-    return () => clearInterval(interval);
-  }, [isPlaying, currentStepIndex, steps.length, nextStep, speed, setIsPlaying]);
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isPlaying, currentStepIndex, steps.length, speed, setCurrentStepIndex, setIsPlaying]);
+
+  const handleRestart = () => {
+    setIsPlaying(false);
+    setCurrentStepIndex(0);
+  };
+
+  const stepForward = () => {
+    setIsPlaying(false);
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
+    }
+  };
+
+  const stepBackward = () => {
+    setIsPlaying(false);
+    if (currentStepIndex > 0) {
+      setCurrentStepIndex(currentStepIndex - 1);
+    }
+  };
+
+  if (steps.length === 0) return null;
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white border-4 border-black p-2 shadow-brutal z-10">
-      <button
-        onClick={resetExecution}
-        className="p-2 hover:bg-gray-100 border-2 border-transparent hover:border-black transition-all"
-      >
-        <RotateCcw size={20} />
-      </button>
-      <div className="w-[2px] h-8 bg-black"></div>
-      <button
-        onClick={prevStep}
-        disabled={currentStepIndex === 0}
-        className="p-2 hover:bg-gray-100 border-2 border-transparent hover:border-black transition-all disabled:opacity-30"
-      >
-        <SkipBack size={20} />
-      </button>
+    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-6 bg-white border-4 border-black p-4 shadow-brutal rounded-[24px]">
+      <div className="flex items-center gap-2 pr-6 border-r-2 border-black border-dashed">
+         <button
+           onClick={handleRestart}
+           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+           title="Restart"
+         >
+           <RotateCcw size={20} />
+         </button>
+      </div>
 
-      <button
-        onClick={() => setIsPlaying(!isPlaying)}
-        className="w-12 h-12 flex items-center justify-center bg-primary-yellow border-2 border-black shadow-brutal active:shadow-none active:translate-x-[2px] active:translate-y-[2px] transition-all"
-      >
-        {isPlaying ? <Pause size={24} className="fill-black" /> : <Play size={24} className="fill-black" />}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={stepBackward}
+          className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+        >
+          <Rewind size={20} />
+        </button>
 
-      <button
-        onClick={nextStep}
-        disabled={currentStepIndex === steps.length - 1}
-        className="p-2 hover:bg-gray-100 border-2 border-transparent hover:border-black transition-all disabled:opacity-30"
-      >
-        <SkipForward size={20} />
-      </button>
+        <button
+          onClick={() => setIsPlaying(!isPlaying)}
+          className={`w-14 h-14 border-4 border-black flex items-center justify-center transition-all shadow-brutal active:translate-y-1 active:shadow-none ${isPlaying ? 'bg-white' : 'bg-primary-yellow'}`}
+        >
+          {isPlaying ? <Pause size={28} fill="black" /> : <Play size={28} fill="black" className="ml-1" />}
+        </button>
 
-      <div className="w-[2px] h-8 bg-black"></div>
+        <button
+          onClick={stepForward}
+          className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
+        >
+          <FastForward size={20} />
+        </button>
+      </div>
 
-      <div className="flex items-center gap-2 px-2">
-        <span className="text-xs font-black uppercase">Speed</span>
+      <div className="flex items-center gap-3 pl-6 border-l-2 border-black border-dashed font-black text-[10px] uppercase">
+        <span className="text-gray-400">Speed</span>
         <select
           value={speed}
           onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          className="bg-white border-2 border-black px-2 py-1 font-bold text-xs outline-none"
+          className="border-2 border-black p-1 bg-white outline-none cursor-pointer"
         >
           <option value={0.5}>0.5x</option>
           <option value={1}>1.0x</option>
