@@ -40,9 +40,19 @@ const NodeComponent = ({ id, data, selected }: any) => {
   return (
     <div
       onDoubleClick={handleDoubleClick}
-      className={`px-4 py-2 border-4 border-black font-black uppercase text-xs shadow-brutal transition-all duration-300 ${bgClass} ${selected ? 'ring-4 ring-primary-yellow ring-offset-2' : ''} cursor-pointer group relative min-w-[60px] text-center`}
+      className={`px-4 py-2 border-4 border-black font-black uppercase text-sm shadow-brutal transition-all duration-300 ${bgClass} ${selected ? 'ring-4 ring-primary-yellow ring-offset-2' : ''} cursor-pointer group relative min-w-[80px] text-center`}
     >
-      <Handle type="target" position={Position.Top} className="w-3 h-3 bg-black border-2 border-white" />
+      {/* Target Handles */}
+      <Handle type="target" position={Position.Top} id="top-target" className="w-3 h-3 bg-black border-2 border-white" />
+      <Handle type="target" position={Position.Bottom} id="bottom-target" className="w-3 h-3 bg-black border-2 border-white" />
+      <Handle type="target" position={Position.Left} id="left-target" className="w-3 h-3 bg-black border-2 border-white" />
+      <Handle type="target" position={Position.Right} id="right-target" className="w-3 h-3 bg-black border-2 border-white" />
+
+      {/* Source Handles */}
+      <Handle type="source" position={Position.Top} id="top-source" className="w-3 h-3 bg-black border-2 border-white opacity-0 group-hover:opacity-100" />
+      <Handle type="source" position={Position.Bottom} id="bottom-source" className="w-3 h-3 bg-black border-2 border-white opacity-0 group-hover:opacity-100" />
+      <Handle type="source" position={Position.Left} id="left-source" className="w-3 h-3 bg-black border-2 border-white opacity-0 group-hover:opacity-100" />
+      <Handle type="source" position={Position.Right} id="right-source" className="w-3 h-3 bg-black border-2 border-white opacity-0 group-hover:opacity-100" />
 
       {isEditing ? (
         <input
@@ -60,13 +70,11 @@ const NodeComponent = ({ id, data, selected }: any) => {
       {selected && !isEditing && (
          <button
            onClick={() => deleteNode(id)}
-           className="absolute -top-4 -right-4 bg-red-500 text-white border-2 border-black p-0.5 hover:bg-red-600 shadow-brutal active:translate-x-0.5 active:translate-y-0.5 active:shadow-none z-50 rounded-full"
+           className="absolute -top-6 -right-6 bg-red-500 text-white border-2 border-black p-1 hover:bg-red-600 shadow-brutal active:translate-x-0.5 active:translate-y-0.5 active:shadow-none z-50 rounded-full"
          >
-            <X size={12} strokeWidth={4} />
+            <X size={16} strokeWidth={4} />
          </button>
       )}
-
-      <Handle type="source" position={Position.Bottom} className="w-3 h-3 bg-black border-2 border-white" />
     </div>
   );
 };

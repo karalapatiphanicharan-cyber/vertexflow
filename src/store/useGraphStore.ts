@@ -20,6 +20,8 @@ interface GraphState {
 
   // Manual Editing Mode
   interactionMode: 'pointer' | 'addNode' | 'addEdge';
+  startNodeId: string;
+  endNodeId: string;
 
   // Actions
   setNodes: (nodes: GraphNode[]) => void;
@@ -28,6 +30,8 @@ interface GraphState {
   toggleWeighted: () => void;
   setSelectedAlgorithm: (algo: string) => void;
   setInteractionMode: (mode: 'pointer' | 'addNode' | 'addEdge') => void;
+  setStartNodeId: (id: string) => void;
+  setEndNodeId: (id: string) => void;
 
   // Node/Edge Editing
   addNode: (position: { x: number; y: number }) => void;
@@ -72,13 +76,26 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   historyIndex: -1,
 
   interactionMode: 'pointer',
+  startNodeId: '',
+  endNodeId: '',
 
-  setNodes: (nodes) => set({ nodes }),
+  setNodes: (nodes) => {
+    const { startNodeId, endNodeId } = get();
+    // Validate start/end nodes still exist
+    const nodeIds = new Set(nodes.map(n => n.id));
+    set({
+      nodes,
+      startNodeId: nodeIds.has(startNodeId) ? startNodeId : (nodes.length > 0 ? nodes[0].id : ''),
+      endNodeId: nodeIds.has(endNodeId) ? endNodeId : (nodes.length > 1 ? nodes[nodes.length - 1].id : (nodes.length > 0 ? nodes[0].id : ''))
+    });
+  },
   setEdges: (edges) => set({ edges }),
   toggleDirected: () => set((state) => ({ isDirected: !state.isDirected })),
   toggleWeighted: () => set((state) => ({ isWeighted: !state.isWeighted })),
   setSelectedAlgorithm: (selectedAlgorithm) => set({ selectedAlgorithm }),
   setInteractionMode: (interactionMode) => set({ interactionMode }),
+  setStartNodeId: (startNodeId) => set({ startNodeId }),
+  setEndNodeId: (endNodeId) => set({ endNodeId }),
 
   addNode: (position) => {
     const { nodes } = get();
@@ -96,10 +113,13 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   },
 
   deleteNode: (id) => {
-    const { nodes, edges } = get();
+    const { nodes, edges, startNodeId, endNodeId } = get();
+    const newNodes = nodes.filter(n => n.id !== id);
     set({
-      nodes: nodes.filter(n => n.id !== id),
-      edges: edges.filter(e => e.source !== id && e.target !== id)
+      nodes: newNodes,
+      edges: edges.filter(e => e.source !== id && e.target !== id),
+      startNodeId: startNodeId === id ? (newNodes.length > 0 ? newNodes[0].id : '') : startNodeId,
+      endNodeId: endNodeId === id ? (newNodes.length > 0 ? newNodes[newNodes.length - 1].id : '') : endNodeId
     });
     get().pushHistory();
   },
@@ -149,7 +169,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
   resetExecution: () => set({ currentStepIndex: 0, isPlaying: false, steps: [] }),
   clearGraph: () => {
-     set({ nodes: [], edges: [], steps: [], currentStepIndex: 0, isPlaying: false });
+     set({ nodes: [], edges: [], steps: [], currentStepIndex: 0, isPlaying: false, startNodeId: '', endNodeId: '' });
      get().pushHistory();
   },
 

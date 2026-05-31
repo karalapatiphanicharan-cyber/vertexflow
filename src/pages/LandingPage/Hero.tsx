@@ -21,12 +21,12 @@ export const Hero: React.FC = () => {
             Build graphs. Run algorithms. Understand every step with premium animations and real-time state visualization.
           </p>
           <div className="flex flex-wrap gap-6">
-            <button className="neo-brutal-button-blue flex items-center gap-2 text-xl py-4">
+            <a href="/playground" className="neo-brutal-button bg-primary-blue text-white flex items-center gap-2 text-xl py-4 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
               <Play className="fill-current" /> Launch Playground
-            </button>
-            <button className="neo-brutal-button flex items-center gap-2 text-xl py-4">
+            </a>
+            <a href="/algorithms" className="neo-brutal-button bg-white text-black flex items-center gap-2 text-xl py-4 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
               <Search /> Explore Algorithms
-            </button>
+            </a>
           </div>
         </motion.div>
 

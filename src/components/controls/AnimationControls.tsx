@@ -27,20 +27,17 @@ export const AnimationControls: React.FC = () => {
   useEffect(() => {
     if (isPlaying && currentStepIndex < steps.length - 1) {
       const delay = 1000 / speed;
-      timerRef.current = window.setInterval(() => {
+      timerRef.current = window.setTimeout(() => {
         setCurrentStepIndex(currentStepIndex + 1);
       }, delay);
-    } else {
-      if (currentStepIndex >= steps.length - 1) {
-        setIsPlaying(false);
-      }
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
+    } else if (currentStepIndex >= steps.length - 1) {
+      setIsPlaying(false);
     }
+
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
     };
   }, [isPlaying, currentStepIndex, steps.length, speed, setCurrentStepIndex, setIsPlaying]);
 

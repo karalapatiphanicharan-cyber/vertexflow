@@ -33,14 +33,6 @@ const LearnPage: React.FC = () => {
                  <ChevronRight size={16} />
                </button>
              ))}
-             <div className="pt-8 opacity-40 grayscale pointer-events-none">
-                <div className="text-[10px] font-black uppercase tracking-widest mb-2">Coming Soon</div>
-                <div className="space-y-2">
-                   {['Bellman-Ford', 'A* Search', 'Prim\'s', 'Kruskal\'s', 'Tarjan\'s'].map(name => (
-                     <div key={name} className="p-3 border-2 border-dashed border-black font-bold uppercase text-[10px]">{name}</div>
-                   ))}
-                </div>
-             </div>
           </div>
         </aside>
 
