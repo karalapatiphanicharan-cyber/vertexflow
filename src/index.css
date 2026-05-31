@@ -9,7 +9,33 @@
 
 @layer base {
   body {
-    @apply bg-white text-black;
+    @apply bg-white text-black antialiased;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  h1 {
+    @apply text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-4;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-black uppercase tracking-tight leading-tight mb-4;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl font-black uppercase tracking-tight leading-tight mb-2;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl font-black uppercase tracking-tight mb-2;
+  }
+
+  p {
+    @apply text-base md:text-lg font-medium leading-relaxed mb-4;
+  }
+
+  label {
+    @apply text-xs md:text-sm font-black uppercase tracking-widest mb-1 block;
   }
 
   .custom-scrollbar::-webkit-scrollbar {

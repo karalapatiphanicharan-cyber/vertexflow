@@ -24,11 +24,11 @@ export const runDijkstra = (nodes: GraphNode[], edges: GraphEdge[], startNodeId:
         data: { ...n.data, label: `${n.data.label} [${distances[n.id] === Infinity ? '∞' : distances[n.id]}]` }
       })),
       edges: [...edges],
-      explanation: `Exploring node ${u} with current shortest distance ${d}`,
+      explanation: `Selected node ${nodes.find(n => n.id === u)?.data.label || u} from Priority Queue with distance ${d}. It's now part of the shortest path tree.`,
       visitedNodes: new Set(visited),
       activeNodes: new Set([u]),
       activeEdges: new Set(),
-      priorityQueueState: [...pq]
+      priorityQueueState: pq.map(item => `${nodes.find(n => n.id === item.id)?.data.label || item.id}:${item.dist}`)
     });
 
     const outgoingEdges = edges.filter(e => e.source === u || (!isDirected && e.target === u));
@@ -46,11 +46,11 @@ export const runDijkstra = (nodes: GraphNode[], edges: GraphEdge[], startNodeId:
             data: { ...n.data, label: `${n.data.label} [${distances[n.id] === Infinity ? '∞' : distances[n.id]}]` }
           })),
           edges: edges.map(e => ({ ...e, animated: e.id === edge.id })),
-          explanation: `Relaxing edge ${u}-${v}, updated distance of ${v} to ${distances[v]}`,
+          explanation: `Found a shorter path to ${nodes.find(n => n.id === v)?.data.label || v} via ${nodes.find(n => n.id === u)?.data.label || u}. New distance: ${distances[v]}.`,
           visitedNodes: new Set(visited),
           activeNodes: new Set([v]),
           activeEdges: new Set([edge.id]),
-          priorityQueueState: [...pq]
+          priorityQueueState: pq.map(item => `${nodes.find(n => n.id === item.id)?.data.label || item.id}:${item.dist}`)
         });
       }
     }

@@ -69,7 +69,30 @@ export const RightPanel: React.FC = () => {
                 </div>
               </div>
             )}
-            {!currentStep?.queueState && !currentStep?.stackState && (
+            {currentStep?.priorityQueueState && (
+              <div>
+                <div className="font-black mb-2 uppercase text-[9px] text-orange-500">Priority Queue (Node:Dist):</div>
+                <div className="flex flex-wrap gap-1">
+                  {currentStep.priorityQueueState.map((val: any, i: number) => (
+                    <div key={i} className="border border-white/20 px-2 py-1 bg-white/10 text-white min-w-[24px] text-center">{val}</div>
+                  ))}
+                  {currentStep.priorityQueueState.length === 0 && <span className="text-gray-500 italic">Empty</span>}
+                </div>
+              </div>
+            )}
+            {currentStep?.dsuState && (
+              <div>
+                <div className="font-black mb-2 uppercase text-[9px] text-purple-500">DSU State (Parent Map):</div>
+                <div className="grid grid-cols-4 gap-1">
+                  {Object.entries(currentStep.dsuState).map(([node, parent]: [any, any]) => (
+                    <div key={node} className="border border-white/20 px-1 py-1 bg-white/10 text-[8px] text-center">
+                      <span className="text-gray-400">{node}</span>→{parent}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {!currentStep?.queueState && !currentStep?.stackState && !currentStep?.priorityQueueState && !currentStep?.dsuState && (
                <div className="text-gray-500 py-4 text-center border border-dashed border-gray-700">
                   Awaiting algorithm data...
                </div>
@@ -104,11 +127,11 @@ export const RightPanel: React.FC = () => {
 
         <section className="pb-8">
            <h3 className="text-lg font-black uppercase mb-4 flex items-center gap-3 tracking-tight">
-            <BookOpen size={20} className="text-primary-blue" /> Interview Tip
+            <BookOpen size={20} className="text-primary-blue" /> Quick Tip
           </h3>
-          <div className="p-4 border-4 border-black bg-gray-50 shadow-brutal rounded-xl">
+          <div className="p-4 border-4 border-black bg-gray-50 shadow-brutal">
              <p className="text-xs font-bold text-gray-600 leading-relaxed italic">
-                "Graph traversals are the bread and butter of technical interviews. Always start by identifying if you need the shortest path (BFS) or if you need to explore every branch (DFS)."
+                {currentStep?.explanation ? "Keep an eye on the internal data structure to understand how the algorithm makes decisions at each step." : "Select an algorithm and starting point to see how it works internally."}
              </p>
           </div>
         </section>

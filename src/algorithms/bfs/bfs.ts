@@ -19,6 +19,19 @@ export const runBFS = (nodes: GraphNode[], edges: GraphEdge[], startNodeId: stri
   while (queue.length > 0) {
     const currentNodeId = queue.shift()!;
 
+    steps.push({
+      nodes: nodes.map(n => ({
+        ...n,
+        type: n.id === currentNodeId ? 'highlight' : (visited.has(n.id) ? (queue.includes(n.id) ? 'visited' : 'completed') : 'default')
+      })),
+      edges: [...edges],
+      explanation: `Dequeued node ${nodes.find(n => n.id === currentNodeId)?.data.label || currentNodeId}. Now exploring its neighbors.`,
+      visitedNodes: new Set(visited),
+      activeNodes: new Set([currentNodeId]),
+      activeEdges: new Set(),
+      queueState: [...queue]
+    });
+
     // Process neighbors
     const neighbors = edges
       .filter(e => e.source === currentNodeId || (!isDirected && e.target === currentNodeId))
@@ -35,7 +48,7 @@ export const runBFS = (nodes: GraphNode[], edges: GraphEdge[], startNodeId: stri
             type: visited.has(n.id) ? (queue.includes(n.id) ? 'visited' : 'completed') : 'default'
           })),
           edges: [...edges],
-          explanation: `Visiting neighbor ${neighborId} from ${currentNodeId}`,
+          explanation: `Discovered neighbor ${nodes.find(n => n.id === neighborId)?.data.label || neighborId} from ${nodes.find(n => n.id === currentNodeId)?.data.label || currentNodeId}. Adding to queue.`,
           visitedNodes: new Set(visited),
           activeNodes: new Set([neighborId]),
           activeEdges: new Set([edges.find(e => (e.source === currentNodeId && e.target === neighborId) || (e.target === currentNodeId && e.source === neighborId))?.id || '']),

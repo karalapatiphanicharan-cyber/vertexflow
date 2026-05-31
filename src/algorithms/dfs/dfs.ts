@@ -8,13 +8,13 @@ export const runDFS = (nodes: GraphNode[], edges: GraphEdge[], startNodeId: stri
   const traverse = (nodeId: string) => {
     visited.add(nodeId);
     steps.push({
-      nodes: nodes.map(n => ({ ...n, type: visited.has(n.id) ? 'visited' : 'default' })),
+      nodes: nodes.map(n => ({ ...n, type: n.id === nodeId ? 'highlight' : (visited.has(n.id) ? 'visited' : 'default') })),
       edges: [...edges],
-      explanation: `Visiting node ${nodeId}`,
+      explanation: `Visiting node ${nodes.find(n => n.id === nodeId)?.data.label || nodeId}. Push to stack.`,
       visitedNodes: new Set(visited),
       activeNodes: new Set([nodeId]),
       activeEdges: new Set(),
-      stackState: [...stack]
+      stackState: [...stack].map(id => nodes.find(n => n.id === id)?.data.label || id)
     });
 
     const neighbors = edges
@@ -32,11 +32,11 @@ export const runDFS = (nodes: GraphNode[], edges: GraphEdge[], startNodeId: stri
     steps.push({
       nodes: nodes.map(n => ({ ...n, type: visited.has(n.id) ? 'completed' : 'default' })),
       edges: [...edges],
-      explanation: `Finished processing node ${nodeId}`,
+      explanation: `Backtracking from ${nodes.find(n => n.id === nodeId)?.data.label || nodeId}. Pop from stack.`,
       visitedNodes: new Set(visited),
       activeNodes: new Set([nodeId]),
       activeEdges: new Set(),
-      stackState: [...stack]
+      stackState: [...stack].map(id => nodes.find(n => n.id === id)?.data.label || id)
     });
   };
 
