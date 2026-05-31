@@ -7,6 +7,7 @@ import { RealWorldApps } from './RealWorldApps';
 import { FAQ } from './FAQ';
 import { Footer } from '../../components/common/Footer';
 import { ProductScreenshots } from './ProductScreenshots';
+import { WhyVertexFlow } from './WhyVertexFlow';
 
 const LandingPage: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const LandingPage: React.FC = () => {
       <Features />
       <SupportedAlgorithms />
       <ProductScreenshots />
+      <WhyVertexFlow />
       <RealWorldApps />
       <FAQ />
       <Footer />

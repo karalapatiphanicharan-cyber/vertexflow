@@ -30,17 +30,21 @@ const features = [
 
 export const Features: React.FC = () => {
   return (
-    <section className="py-24 px-8 border-t-4 border-black bg-white">
+    <section className="py-32 px-8 border-t-4 border-black bg-white">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-5xl font-black uppercase tracking-tighter mb-16 text-center">Built for Power Users</h2>
+        <div className="text-center mb-20">
+          <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">Built for <span className="text-primary-blue">Power Users</span></h2>
+          <p className="text-xl font-black text-black/60 uppercase tracking-widest">Everything you need to master graph theory</p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((f, i) => (
-            <div key={i} className="border-4 border-black p-8 shadow-brutal flex flex-col h-full bg-white group hover:-translate-y-1 transition-transform">
-              <div className={`w-16 h-16 border-4 border-black ${f.color} flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+            <div key={i} className="border-4 border-black p-8 shadow-brutal flex flex-col h-full bg-white group hover:-translate-y-2 transition-all rounded-[32px]">
+              <div className={`w-16 h-16 border-4 border-black ${f.color} flex items-center justify-center mb-8 shadow-brutal`}>
                 {f.icon}
               </div>
               <h3 className="text-2xl font-black uppercase mb-4">{f.title}</h3>
-              <p className="font-bold text-gray-600 leading-relaxed">{f.description}</p>
+              <p className="font-bold text-gray-500 leading-tight text-lg">{f.description}</p>
             </div>
           ))}
         </div>

@@ -10,22 +10,23 @@ export const Hero: React.FC = () => {
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
+          className="flex flex-col items-center lg:items-start text-center lg:text-left"
         >
-          <div className="inline-block px-4 py-1 border-2 border-black bg-primary-yellow font-black uppercase tracking-widest text-sm mb-6 shadow-brutal">
-            Beta Access Now Open
+          <div className="inline-block px-4 py-2 border-4 border-black bg-primary-yellow font-black uppercase tracking-widest text-sm mb-8 shadow-brutal">
+            Interactive Graph Algorithm Platform
           </div>
-          <h1 className="text-6xl md:text-8xl font-black uppercase leading-[0.9] mb-8 tracking-tighter">
-            Visualize Graph <span className="text-primary-blue">Algorithms</span> Like Never Before
+          <h1 className="text-5xl md:text-6xl xl:text-8xl font-black uppercase leading-[0.85] mb-8 tracking-tighter max-w-2xl">
+            Visualize Graph <span className="text-primary-blue">Algorithms</span> In Motion
           </h1>
-          <p className="text-2xl font-bold mb-10 max-w-lg">
-            Build graphs. Run algorithms. Understand every step with premium animations and real-time state visualization.
+          <p className="text-xl md:text-2xl xl:text-3xl font-black mb-12 max-w-xl text-gray-500 leading-tight">
+            Build. Run. Understand. The ultimate playground for mastering graph theory.
           </p>
-          <div className="flex flex-wrap gap-6">
-            <a href="/playground" className="neo-brutal-button bg-primary-blue text-white flex items-center gap-2 text-xl py-4 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-              <Play className="fill-current" /> Launch Playground
+          <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
+            <a href="/playground" className="neo-brutal-button bg-primary-blue text-white flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
+              <Play className="fill-current" size={24} /> Launch Playground
             </a>
-            <a href="/algorithms" className="neo-brutal-button bg-white text-black flex items-center gap-2 text-xl py-4 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-              <Search /> Explore Algorithms
+            <a href="/learn" className="neo-brutal-button bg-white text-black flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
+              <Search size={24} /> Explore Algorithms
             </a>
           </div>
         </motion.div>
