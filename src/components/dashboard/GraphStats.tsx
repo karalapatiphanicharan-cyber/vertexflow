@@ -1,50 +1,44 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useGraphStore } from '../../store/useGraphStore';
-import { BarChart2 } from 'lucide-react';
+import { Activity, Layout, Layers } from 'lucide-react';
 
 export const GraphStats: React.FC = () => {
   const { nodes, edges, isDirected, isWeighted } = useGraphStore();
 
-  const stats = useMemo(() => {
-    const n = nodes.length;
-    const e = edges.length;
-    const density = n > 1 ? (isDirected ? e / (n * (n - 1)) : (2 * e) / (n * (n - 1))) : 0;
+  const density = nodes.length > 1
+    ? (edges.length / (nodes.length * (nodes.length - 1))).toFixed(2)
+    : '0.00';
 
-    // Simple degree calculation
-    const totalDegree = edges.length * 2;
-    const avgDegree = n > 0 ? totalDegree / n : 0;
-
-    return {
-      nodes: n,
-      edges: e,
-      density: density.toFixed(2),
-      avgDegree: avgDegree.toFixed(2),
-      type: `${isDirected ? 'Directed' : 'Undirected'}, ${isWeighted ? 'Weighted' : 'Unweighted'}`
-    };
-  }, [nodes, edges, isDirected, isWeighted]);
+  const avgDegree = nodes.length > 0
+    ? (edges.length * 2 / nodes.length).toFixed(2)
+    : '0.00';
 
   return (
     <section>
-      <h3 className="text-lg font-black uppercase mb-4 flex items-center gap-2">
-        <BarChart2 size={20} /> Graph Statistics
+      <h3 className="text-lg font-black uppercase mb-4 flex items-center gap-3 tracking-tight">
+        <Activity size={20} className="text-primary-blue" /> Graph Info
       </h3>
-      <div className="grid grid-cols-2 gap-2">
-        <StatCard label="Nodes" value={stats.nodes} />
-        <StatCard label="Edges" value={stats.edges} />
-        <StatCard label="Density" value={stats.density} />
-        <StatCard label="Avg Degree" value={stats.avgDegree} />
-        <div className="col-span-2 border-2 border-black p-2 bg-white">
-          <div className="text-[8px] font-black uppercase">Graph Type</div>
-          <div className="text-xs font-bold">{stats.type}</div>
-        </div>
+      <div className="grid grid-cols-2 gap-4">
+        <StatItem label="Node Count" value={nodes.length} color="bg-white" />
+        <StatItem label="Edge Count" value={edges.length} color="bg-white" />
+        <StatItem label="Density" value={density} color="bg-white" />
+        <StatItem label="Avg Degree" value={avgDegree} color="bg-white" />
+      </div>
+      <div className="mt-4 p-3 border-4 border-black bg-primary-blue text-white shadow-brutal flex items-center justify-between">
+         <div className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+            <Layout size={14} className="text-primary-yellow" /> Type
+         </div>
+         <div className="text-[10px] font-black uppercase">
+            {isDirected ? 'Directed' : 'Undirected'}, {isWeighted ? 'Weighted' : 'Unweighted'}
+         </div>
       </div>
     </section>
   );
 };
 
-const StatCard: React.FC<{ label: string; value: string | number }> = ({ label, value }) => (
-  <div className="border-2 border-black p-2 bg-white">
-    <div className="text-[8px] font-black uppercase">{label}</div>
-    <div className="text-lg font-black">{value}</div>
+const StatItem = ({ label, value, color }: any) => (
+  <div className={`border-4 border-black p-4 ${color} shadow-brutal transition-transform hover:-translate-y-0.5`}>
+    <div className="text-[9px] font-black uppercase text-gray-400 mb-1 tracking-tighter">{label}</div>
+    <div className="text-2xl font-black">{value}</div>
   </div>
 );

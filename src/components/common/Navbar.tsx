@@ -17,24 +17,21 @@ export const Navbar: React.FC<NavbarProps> = ({ showLogo = true }) => {
         <span className="text-xl md:text-2xl font-black uppercase tracking-tighter">VertexFlow</span>
       </Link>
 
-      <div className="hidden lg:flex items-center gap-8 font-black uppercase text-xs tracking-widest">
-        <Link to="/playground" className={`hover:text-primary-blue transition-colors ${location.pathname === '/playground' ? 'text-primary-blue' : ''}`}>Playground</Link>
-        <Link to="/comparison" className={`hover:text-primary-blue transition-colors ${location.pathname === '/comparison' ? 'text-primary-blue' : ''}`}>Comparison</Link>
-        <Link to="/learn" className={`hover:text-primary-blue transition-colors ${location.pathname === '/learn' ? 'text-primary-blue' : ''}`}>Learn</Link>
-        <Link to="/challenges" className={`hover:text-primary-blue transition-colors ${location.pathname === '/challenges' ? 'text-primary-blue' : ''}`}>Challenges</Link>
-        <Link to="/leetcode" className={`hover:text-primary-blue transition-colors ${location.pathname.startsWith('/leetcode') ? 'text-primary-blue' : ''}`}>LeetCode</Link>
+      <div className="hidden lg:flex items-center gap-12 font-black uppercase text-xs tracking-[0.2em]">
+        <Link to="/playground" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/playground' ? 'border-primary-blue' : 'border-transparent'}`}>Playground</Link>
+        <Link to="/comparison" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/comparison' ? 'border-primary-blue' : 'border-transparent'}`}>Comparison</Link>
+        <Link to="/learn" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/learn' ? 'border-primary-blue' : 'border-transparent'}`}>Learn Hub</Link>
       </div>
 
       <div>
         {isLanding ? (
           <Link to="/playground">
-            <NeoButton variant="primary">Launch App</NeoButton>
+            <NeoButton variant="primary">Get Started</NeoButton>
           </Link>
         ) : (
-          <div className="lg:hidden">
-             {/* Simple mobile menu indicator or just keep it minimal */}
-             <span className="font-black text-[10px] bg-black text-white px-2 py-1">MENU</span>
-          </div>
+           <Link to="/" className="text-[10px] font-black uppercase border-b-2 border-black hover:text-primary-blue hover:border-primary-blue transition-all">
+              Home
+           </Link>
         )}
       </div>
     </nav>

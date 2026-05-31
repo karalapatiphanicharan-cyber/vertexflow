@@ -4,25 +4,61 @@
   --color-primary-yellow: #FEF08A;
   --color-primary-blue: #3B82F6;
   --shadow-brutal: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-  --shadow-brutal-lg: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
   body {
-    @apply bg-white text-black font-sans;
+    @apply bg-white text-black;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-white border-l-4 border-black;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-black border-4 border-white;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-blue;
   }
 }
 
 @layer components {
-  .neo-brutal-card {
-    @apply border-4 border-black bg-white shadow-[var(--shadow-brutal)] p-6 rounded-none transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[var(--shadow-brutal-lg)];
-  }
-
   .neo-brutal-button {
-    @apply border-4 border-black bg-primary-yellow px-6 py-2 font-bold shadow-[var(--shadow-brutal)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer;
+    @apply border-4 border-black px-6 py-2 font-black uppercase tracking-tight
+           transition-all shadow-brutal active:translate-x-1 active:translate-y-1 active:shadow-none;
   }
 
-  .neo-brutal-button-blue {
-    @apply border-4 border-black bg-primary-blue text-white px-6 py-2 font-bold shadow-[var(--shadow-brutal)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer;
+  .neo-brutal-card {
+    @apply border-4 border-black p-6 bg-white shadow-brutal;
   }
+}
+
+.react-flow__node {
+  border-radius: 0 !important;
+}
+
+.react-flow__handle {
+  width: 12px !important;
+  height: 12px !important;
+  border: 2px solid white !important;
+  background-color: black !important;
+}
+
+.react-flow__edge-path {
+  stroke: black !important;
+  stroke-width: 3px !important;
+}
+
+.react-flow__controls {
+  border: 4px solid black !important;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1) !important;
+  border-radius: 0 !important;
+}
+
+.react-flow__controls-button {
+  border-bottom: 2px solid black !important;
 }

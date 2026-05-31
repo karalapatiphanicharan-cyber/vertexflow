@@ -1,156 +1,156 @@
 import React, { useState } from 'react';
 import { Navbar } from '../../components/common/Navbar';
-import { BookOpen, Search, Clock, Zap, CheckCircle2, AlertCircle } from 'lucide-react';
-import { learningContent } from '../../data/learningContent';
+import { learningContent, AlgorithmLearningData } from '../../data/learningContent';
+import { Book, Code2, Zap, Info, ShieldAlert, CheckCircle2, ChevronRight, GraduationCap } from 'lucide-react';
+import { NeoCard } from '../../components/common/NeoCard';
 
 const LearnPage: React.FC = () => {
-  const [selectedAlgoId, setSelectedAlgoId] = useState('bfs');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAlgo, setSelectedAlgo] = useState<string>('bfs');
+  const data = learningContent[selectedAlgo];
 
-  const currentAlgo = learningContent[selectedAlgoId] || learningContent['bfs'];
-
-  const categories = [
-    { name: 'Traversal', algos: ['bfs', 'dfs'] },
-    { name: 'Shortest Path', algos: ['dijkstra', 'bellmanFord'] },
-    { name: 'MST', algos: ['prim', 'kruskal'] },
-  ];
-
-  const filteredCategories = categories.map(cat => ({
-    ...cat,
-    algos: cat.algos.filter(id =>
-      learningContent[id]?.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(cat => cat.algos.length > 0);
+  if (!data) return <div>Algorithm not found</div>;
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
       <Navbar />
-      <div className="flex-1 p-8 max-w-7xl mx-auto w-full">
-        <header className="mb-12">
-           <h1 className="text-5xl font-black uppercase tracking-tighter mb-4 flex items-center gap-4">
-             <BookOpen size={48} className="text-primary-yellow" /> Learning Hub
-           </h1>
-           <p className="text-xl font-bold text-gray-600">Master graph algorithms with comprehensive guides and interview tips.</p>
-        </header>
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Sidebar */}
+        <aside className="w-full lg:w-80 border-r-4 border-black p-8 bg-gray-50 flex flex-col h-auto lg:h-[calc(100vh-80px)] overflow-y-auto sticky top-20">
+          <div className="flex items-center gap-3 mb-12">
+            <GraduationCap size={40} className="text-primary-blue" />
+            <h2 className="text-3xl font-black uppercase tracking-tighter">Learning <br />Hub</h2>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-           <aside className="md:col-span-1 space-y-2">
-              <div className="relative mb-6">
-                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                 <input
-                   type="text"
-                   placeholder="Search algorithms..."
-                   value={searchTerm}
-                   onChange={(e) => setSearchTerm(e.target.value)}
-                   className="w-full pl-10 pr-4 py-2 border-4 border-black font-bold outline-none focus:bg-primary-yellow/10 transition-colors"
-                 />
-              </div>
-
-              {filteredCategories.map(cat => (
-                <div key={cat.name}>
-                  <CategoryHeader label={cat.name} />
-                  {cat.algos.map(id => (
-                    <AlgoLink
-                      key={id}
-                      label={learningContent[id].name}
-                      active={selectedAlgoId === id}
-                      onClick={() => setSelectedAlgoId(id)}
-                    />
-                  ))}
+          <div className="space-y-4">
+             <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Select Algorithm</div>
+             {Object.keys(learningContent).map((key) => (
+               <button
+                 key={key}
+                 onClick={() => setSelectedAlgo(key)}
+                 className={`w-full text-left p-4 border-4 border-black font-black uppercase text-xs transition-all shadow-brutal active:translate-y-1 active:shadow-none flex items-center justify-between ${selectedAlgo === key ? 'bg-primary-yellow translate-x-1 translate-y-1 shadow-none' : 'bg-white hover:bg-gray-100'}`}
+               >
+                 {learningContent[key].name}
+                 <ChevronRight size={16} />
+               </button>
+             ))}
+             <div className="pt-8 opacity-40 grayscale pointer-events-none">
+                <div className="text-[10px] font-black uppercase tracking-widest mb-2">Coming Soon</div>
+                <div className="space-y-2">
+                   {['Bellman-Ford', 'A* Search', 'Prim\'s', 'Kruskal\'s', 'Tarjan\'s'].map(name => (
+                     <div key={name} className="p-3 border-2 border-dashed border-black font-bold uppercase text-[10px]">{name}</div>
+                   ))}
                 </div>
-              ))}
-           </aside>
+             </div>
+          </div>
+        </aside>
 
-           <main className="md:col-span-3">
-              <div className="border-4 border-black p-8 bg-white shadow-brutal min-h-[600px]">
-                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                    <h2 className="text-4xl font-black uppercase">{currentAlgo.name}</h2>
-                    <div className="flex gap-4">
-                       <ComplexityBadge icon={<Clock size={14}/>} label="Time" value={currentAlgo.complexity.time} />
-                       <ComplexityBadge icon={<Zap size={14}/>} label="Space" value={currentAlgo.complexity.space} />
+        {/* Content */}
+        <main className="flex-1 p-4 md:p-12 overflow-y-auto max-w-6xl">
+           <header className="mb-16">
+              <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">{data.name}</h1>
+              <p className="text-xl md:text-2xl font-bold text-gray-500 leading-relaxed italic border-l-8 border-primary-yellow pl-8">
+                "{data.introduction}"
+              </p>
+           </header>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+              <section className="space-y-8">
+                 <div className="border-4 border-black p-8 bg-white shadow-brutal rounded-[24px]">
+                    <h3 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
+                       <Info size={28} className="text-primary-blue" /> Why it exists
+                    </h3>
+                    <p className="font-bold text-gray-600 leading-relaxed">{data.whyItExists}</p>
+                 </div>
+
+                 <div className="border-4 border-black p-8 bg-gray-50 shadow-brutal rounded-[24px]">
+                    <h3 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
+                       <Zap size={28} className="text-primary-yellow" /> When to use
+                    </h3>
+                    <div className="space-y-4">
+                       <div className="p-4 bg-white border-2 border-black flex gap-4">
+                          <CheckCircle2 size={24} className="text-green-500 shrink-0" />
+                          <p className="text-sm font-bold text-gray-600">{data.whenToUse}</p>
+                       </div>
+                       <div className="p-4 bg-white border-2 border-black flex gap-4">
+                          <ShieldAlert size={24} className="text-red-500 shrink-0" />
+                          <p className="text-sm font-bold text-gray-600">{data.whenNotToUse}</p>
+                       </div>
+                    </div>
+                 </div>
+              </section>
+
+              <section className="space-y-8">
+                 <div className="border-4 border-black p-8 bg-black text-white shadow-brutal rounded-[24px]">
+                    <h3 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
+                       <Code2 size={28} className="text-primary-yellow" /> Pseudocode
+                    </h3>
+                    <div className="bg-zinc-900 p-6 font-mono text-xs text-primary-yellow overflow-x-auto leading-loose">
+                       <pre>{data.pseudocode}</pre>
                     </div>
                  </div>
 
-                 <section className="font-bold text-gray-600 leading-relaxed">
-                    <p className="mb-8 text-lg text-black">
-                       {currentAlgo.introduction}
-                    </p>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-                       <div>
-                          <h3 className="text-black font-black uppercase mb-4 flex items-center gap-2">
-                            <CheckCircle2 size={20} className="text-green-500" /> How it works
-                          </h3>
-                          <ul className="space-y-3">
-                             {currentAlgo.howItWorks.map((step, i) => (
-                               <li key={i} className="flex gap-3">
-                                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px]">{i+1}</span>
-                                  <span>{step}</span>
-                               </li>
-                             ))}
-                          </ul>
+                 <div className="border-4 border-black p-8 bg-white shadow-brutal rounded-[24px]">
+                    <h3 className="text-2xl font-black uppercase mb-6 flex items-center gap-3">
+                       <Book size={28} className="text-primary-blue" /> Complexity
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                       <div className="p-4 border-2 border-black text-center">
+                          <div className="text-[10px] font-black uppercase text-gray-400">Time</div>
+                          <div className="text-3xl font-black">{data.complexity.time}</div>
                        </div>
-
-                       <div>
-                          <h3 className="text-black font-black uppercase mb-4 flex items-center gap-2">
-                            <AlertCircle size={20} className="text-primary-blue" /> Interview Tips
-                          </h3>
-                          <ul className="list-disc pl-5 space-y-2 text-sm">
-                             {currentAlgo.tips.map((tip, i) => (
-                               <li key={i}>{tip}</li>
-                             ))}
-                          </ul>
+                       <div className="p-4 border-2 border-black text-center">
+                          <div className="text-[10px] font-black uppercase text-gray-400">Space</div>
+                          <div className="text-3xl font-black">{data.complexity.space}</div>
                        </div>
                     </div>
+                 </div>
+              </section>
+           </div>
 
-                    <div className="mb-12 border-4 border-black bg-gray-900 p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                       <h4 className="text-primary-yellow font-black uppercase mb-4 text-xs tracking-widest flex justify-between items-center">
-                          Pseudocode
-                          <span className="text-[8px] bg-white/10 px-2 py-1 rounded text-white/50">READ ONLY</span>
-                       </h4>
-                       <pre className="text-white font-mono text-sm overflow-x-auto">
-                          {currentAlgo.pseudocode}
-                       </pre>
-                    </div>
-
-                    <h3 className="text-black font-black uppercase mb-4">Real-World Applications</h3>
-                    <div className="flex flex-wrap gap-2">
-                       {currentAlgo.useCases.map((useCase, i) => (
-                         <span key={i} className="px-3 py-1 bg-primary-yellow/20 text-black border-2 border-black text-xs uppercase font-black">
-                            {useCase}
-                         </span>
+           <section className="mb-24">
+              <h3 className="text-3xl font-black uppercase mb-12 flex items-center gap-3 underline decoration-primary-yellow underline-offset-8">
+                 Interactive Walkthrough
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                 <div>
+                    <h4 className="text-xl font-black uppercase mb-6">How it works</h4>
+                    <ul className="space-y-6">
+                       {data.howItWorks.map((step, i) => (
+                         <li key={i} className="flex gap-4">
+                            <div className="w-8 h-8 border-4 border-black bg-black text-white flex items-center justify-center shrink-0 font-black text-sm">{i+1}</div>
+                            <p className="font-bold text-gray-600 pt-1">{step}</p>
+                         </li>
                        ))}
+                    </ul>
+                 </div>
+                 <div className="space-y-12">
+                    <div>
+                       <h4 className="text-xl font-black uppercase mb-6">Common Mistakes</h4>
+                       <ul className="space-y-4">
+                          {data.commonMistakes.map((m, i) => (
+                            <li key={i} className="flex items-center gap-3 p-4 border-2 border-red-500 bg-red-50 font-bold text-sm text-red-700">
+                               <ShieldAlert size={20} /> {m}
+                            </li>
+                          ))}
+                       </ul>
                     </div>
-                 </section>
+                    <div>
+                       <h4 className="text-xl font-black uppercase mb-6">Interview Tips</h4>
+                       <ul className="space-y-4">
+                          {data.tips.map((t, i) => (
+                            <li key={i} className="flex items-center gap-3 p-4 border-2 border-primary-blue bg-blue-50 font-bold text-sm text-primary-blue">
+                               <CheckCircle2 size={20} /> {t}
+                            </li>
+                          ))}
+                       </ul>
+                    </div>
+                 </div>
               </div>
-           </main>
-        </div>
+           </section>
+        </main>
       </div>
     </div>
   );
 };
-
-const CategoryHeader = ({ label }: any) => (
-  <div className="text-[10px] font-black uppercase text-gray-400 mt-6 mb-2 tracking-widest">{label}</div>
-);
-
-const AlgoLink = ({ label, active, onClick }: any) => (
-  <button
-    onClick={onClick}
-    className={`w-full text-left px-4 py-2 font-black uppercase text-sm border-2 mb-1 transition-all ${
-      active ? 'bg-black text-white border-black translate-x-1' : 'bg-white text-black border-transparent hover:border-black'
-    }`}
-  >
-    {label}
-  </button>
-);
-
-const ComplexityBadge = ({ icon, label, value }: any) => (
-  <div className="flex items-center gap-2 border-2 border-black px-3 py-1 bg-gray-50 whitespace-nowrap">
-     <span className="text-gray-400">{icon}</span>
-     <span className="text-[10px] font-black uppercase">{label}:</span>
-     <span className="text-xs font-black">{value}</span>
-  </div>
-);
 
 export default LearnPage;

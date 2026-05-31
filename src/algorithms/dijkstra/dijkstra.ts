@@ -21,7 +21,7 @@ export const runDijkstra = (nodes: GraphNode[], edges: GraphEdge[], startNodeId:
       nodes: nodes.map(n => ({
         ...n,
         type: u === n.id ? 'highlight' : (visited.has(n.id) ? 'completed' : 'default'),
-        data: { ...n.data, label: `${n.data.label} (${distances[n.id] === Infinity ? '∞' : distances[n.id]})` }
+        data: { ...n.data, label: `${n.data.label} [${distances[n.id] === Infinity ? '∞' : distances[n.id]}]` }
       })),
       edges: [...edges],
       explanation: `Exploring node ${u} with current shortest distance ${d}`,
@@ -43,7 +43,7 @@ export const runDijkstra = (nodes: GraphNode[], edges: GraphEdge[], startNodeId:
         steps.push({
           nodes: nodes.map(n => ({
             ...n,
-            data: { ...n.data, label: `${n.data.label.split(' ')[0]} (${distances[n.id] === Infinity ? '∞' : distances[n.id]})` }
+            data: { ...n.data, label: `${n.data.label} [${distances[n.id] === Infinity ? '∞' : distances[n.id]}]` }
           })),
           edges: edges.map(e => ({ ...e, animated: e.id === edge.id })),
           explanation: `Relaxing edge ${u}-${v}, updated distance of ${v} to ${distances[v]}`,

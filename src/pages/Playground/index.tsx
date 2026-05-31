@@ -6,31 +6,33 @@ import { RightPanel } from '../../components/dashboard/RightPanel';
 import { AnimationControls } from '../../components/controls/AnimationControls';
 import { useGraphStore } from '../../store/useGraphStore';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { Navbar } from '../../components/common/Navbar';
 
 const Playground: React.FC = () => {
-  const { nodes, edges, steps, currentStepIndex, setNodes, setEdges } = useGraphStore();
+  const { nodes, edges, steps, currentStepIndex } = useGraphStore();
   useKeyboardShortcuts();
 
   return (
-    <WorkspaceLayout
-      leftSidebar={<GraphControls />}
-      canvas={
-        <>
-          <GraphCanvas
-            nodes={nodes}
-            edges={edges}
-            steps={steps}
-            currentStepIndex={currentStepIndex}
-            onNodesChange={(changes: any) => {
-              // React Flow handles internal state, but we might want to sync back if needed
-              // For now, Playground relies on manual controls mostly
-            }}
-          />
-          <AnimationControls />
-        </>
-      }
-      rightPanel={<RightPanel />}
-    />
+    <div className="flex flex-col h-screen">
+      <Navbar />
+      <div className="flex-1 overflow-hidden">
+        <WorkspaceLayout
+          leftSidebar={<GraphControls />}
+          canvas={
+            <>
+              <GraphCanvas
+                nodes={nodes}
+                edges={edges}
+                steps={steps}
+                currentStepIndex={currentStepIndex}
+              />
+              <AnimationControls />
+            </>
+          }
+          rightPanel={<RightPanel />}
+        />
+      </div>
+    </div>
   );
 };
 

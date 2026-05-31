@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { GraphNode, GraphEdge, AlgorithmStep } from '../types/graph';
+import { useGraphStore } from './useGraphStore';
 
 interface SideState {
   nodes: GraphNode[];
@@ -13,7 +14,9 @@ interface SideState {
     runtime: number;
     steps: number;
     nodesVisited: number;
-    edgesTraversed: number;
+    traversalOrder: string[];
+    finalPath: string[];
+    memoryEstimate: string;
   };
 }
 
@@ -28,13 +31,13 @@ interface ComparisonState {
   startSimultaneous: () => void;
   stopSimultaneous: () => void;
 
-  syncGraphs: () => void; // Copy graph A to B
+  syncFromPlayground: () => void;
 }
 
-const initialSideState = (nodes: GraphNode[] = [], edges: GraphEdge[] = []): SideState => ({
+const initialSideState = (nodes: GraphNode[] = [], edges: GraphEdge[] = [], algo: string = 'bfs'): SideState => ({
   nodes,
   edges,
-  algorithm: 'bfs',
+  algorithm: algo,
   steps: [],
   currentStepIndex: 0,
   isPlaying: false,
@@ -43,25 +46,27 @@ const initialSideState = (nodes: GraphNode[] = [], edges: GraphEdge[] = []): Sid
     runtime: 0,
     steps: 0,
     nodesVisited: 0,
-    edgesTraversed: 0
+    traversalOrder: [],
+    finalPath: [],
+    memoryEstimate: '0 KB'
   }
 });
 
 export const useComparisonStore = create<ComparisonState>((set, get) => ({
-  sideA: initialSideState(),
-  sideB: initialSideState(),
+  sideA: initialSideState([], [], 'bfs'),
+  sideB: initialSideState([], [], 'dfs'),
 
   setSideA: (partial) => set((state) => ({ sideA: { ...state.sideA, ...partial } })),
   setSideB: (partial) => set((state) => ({ sideB: { ...state.sideB, ...partial } })),
 
-  resetComparison: () => set({
-    sideA: { ...get().sideA, currentStepIndex: 0, isPlaying: false, steps: [] },
-    sideB: { ...get().sideB, currentStepIndex: 0, isPlaying: false, steps: [] }
-  }),
+  resetComparison: () => set((state) => ({
+    sideA: { ...state.sideA, currentStepIndex: 0, isPlaying: false, steps: [] },
+    sideB: { ...state.sideB, currentStepIndex: 0, isPlaying: false, steps: [] }
+  })),
 
   startSimultaneous: () => set((state) => ({
-    sideA: { ...state.sideA, isPlaying: true },
-    sideB: { ...state.sideB, isPlaying: true }
+    sideA: { ...state.sideA, isPlaying: true, currentStepIndex: 0 },
+    sideB: { ...state.sideB, isPlaying: true, currentStepIndex: 0 }
   })),
 
   stopSimultaneous: () => set((state) => ({
@@ -69,14 +74,13 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
     sideB: { ...state.sideB, isPlaying: false }
   })),
 
-  syncGraphs: () => {
-    const { sideA } = get();
+  syncFromPlayground: () => {
+    const { nodes, edges } = useGraphStore.getState();
+    const cleanNodes = JSON.parse(JSON.stringify(nodes));
+    const cleanEdges = JSON.parse(JSON.stringify(edges));
     set((state) => ({
-      sideB: {
-        ...state.sideB,
-        nodes: JSON.parse(JSON.stringify(sideA.nodes)),
-        edges: JSON.parse(JSON.stringify(sideA.edges))
-      }
+      sideA: { ...state.sideA, nodes: cleanNodes, edges: cleanEdges, steps: [], currentStepIndex: 0 },
+      sideB: { ...state.sideB, nodes: JSON.parse(JSON.stringify(cleanNodes)), edges: JSON.parse(JSON.stringify(cleanEdges)), steps: [], currentStepIndex: 0 }
     }));
   }
 }));
