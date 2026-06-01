@@ -41,7 +41,9 @@ export const GraphControls: React.FC = () => {
     startNodeId,
     endNodeId,
     setStartNodeId,
-    setEndNodeId
+    setEndNodeId,
+    autoHideMinimap,
+    setAutoHideMinimap
   } = useGraphStore();
 
   const [nodeCount, setNodeCount] = useState(6);
@@ -178,6 +180,10 @@ export const GraphControls: React.FC = () => {
                 <div className="flex items-center justify-between font-black text-[10px] uppercase bg-gray-100 p-2 border-2 border-black">
                   <span>Weighted Edges</span>
                   <input type="checkbox" checked={isWeighted} onChange={toggleWeighted} className="w-4 h-4 border-2 border-black cursor-pointer" />
+                </div>
+                <div className="flex items-center justify-between font-black text-[10px] uppercase bg-gray-100 p-2 border-2 border-black">
+                  <span>Auto-Hide Minimap</span>
+                  <input type="checkbox" checked={autoHideMinimap} onChange={(e) => setAutoHideMinimap(e.target.checked)} className="w-4 h-4 border-2 border-black cursor-pointer" />
                 </div>
                 <NeoButton
                   onClick={() => {

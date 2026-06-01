@@ -4,11 +4,13 @@ import {
   Play,
   Pause,
   RotateCcw,
-  ChevronLeft,
-  ChevronRight,
   FastForward,
-  Rewind
+  Rewind,
+  Plus,
+  Minus,
+  Maximize
 } from 'lucide-react';
+import { useReactFlow } from '@xyflow/react';
 
 export const AnimationControls: React.FC = () => {
   const {
@@ -19,9 +21,9 @@ export const AnimationControls: React.FC = () => {
     currentStepIndex,
     setCurrentStepIndex,
     steps,
-    resetExecution
   } = useGraphStore();
 
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export const AnimationControls: React.FC = () => {
       timerRef.current = window.setTimeout(() => {
         setCurrentStepIndex(currentStepIndex + 1);
       }, delay);
-    } else if (currentStepIndex >= steps.length - 1) {
+    } else if (currentStepIndex >= steps.length - 1 && steps.length > 0) {
       setIsPlaying(false);
     }
 
@@ -60,55 +62,112 @@ export const AnimationControls: React.FC = () => {
     }
   };
 
-  if (steps.length === 0) return null;
+  const hasSteps = steps.length > 0;
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-6 bg-white border-4 border-black p-4 shadow-brutal rounded-[24px]">
-      <div className="flex items-center gap-2 pr-6 border-r-2 border-black border-dashed">
-         <button
-           onClick={handleRestart}
-           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-           title="Restart"
-         >
-           <RotateCcw size={20} />
-         </button>
-      </div>
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[90%] md:w-auto">
+      <div className="flex flex-col md:flex-row items-center gap-4 bg-white border-4 border-black p-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-[32px] transition-all">
 
-      <div className="flex items-center gap-4">
-        <button
-          onClick={stepBackward}
-          className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
-        >
-          <Rewind size={20} />
-        </button>
+        {/* Zoom Controls Section */}
+        <div className="flex items-center gap-2 pr-4 md:border-r-4 border-black border-dashed">
+          <button
+            onClick={() => zoomIn()}
+            className="p-2 border-2 border-black bg-white hover:bg-primary-yellow active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none rounded-xl"
+            title="Zoom In"
+          >
+            <Plus size={18} strokeWidth={3} />
+          </button>
+          <button
+            onClick={() => zoomOut()}
+            className="p-2 border-2 border-black bg-white hover:bg-primary-yellow active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none rounded-xl"
+            title="Zoom Out"
+          >
+            <Minus size={18} strokeWidth={3} />
+          </button>
+          <button
+            onClick={() => fitView()}
+            className="p-2 border-2 border-black bg-white hover:bg-primary-yellow active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none rounded-xl"
+            title="Fit to Screen"
+          >
+            <Maximize size={18} strokeWidth={3} />
+          </button>
+        </div>
 
-        <button
-          onClick={() => setIsPlaying(!isPlaying)}
-          className={`w-14 h-14 border-4 border-black flex items-center justify-center transition-all shadow-brutal active:translate-y-1 active:shadow-none ${isPlaying ? 'bg-white' : 'bg-primary-yellow'}`}
-        >
-          {isPlaying ? <Pause size={28} fill="black" /> : <Play size={28} fill="black" className="ml-1" />}
-        </button>
+        {/* Playback Controls Section */}
+        <div className={`flex items-center gap-4 ${!hasSteps ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
+          <button
+            onClick={handleRestart}
+            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            title="Restart"
+          >
+            <RotateCcw size={20} strokeWidth={3} />
+          </button>
 
-        <button
-          onClick={stepForward}
-          className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none"
-        >
-          <FastForward size={20} />
-        </button>
-      </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={stepBackward}
+              className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none rounded-xl"
+              disabled={!hasSteps}
+            >
+              <Rewind size={20} fill="black" />
+            </button>
 
-      <div className="flex items-center gap-3 pl-6 border-l-2 border-black border-dashed font-black text-[10px] uppercase">
-        <span className="text-gray-400">Speed</span>
-        <select
-          value={speed}
-          onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          className="border-2 border-black p-1 bg-white outline-none cursor-pointer"
-        >
-          <option value={0.5}>0.5x</option>
-          <option value={1}>1.0x</option>
-          <option value={2}>2.0x</option>
-          <option value={4}>4.0x</option>
-        </select>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`w-14 h-14 border-4 border-black rounded-2xl flex items-center justify-center transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none ${isPlaying ? 'bg-white' : 'bg-primary-yellow'}`}
+              disabled={!hasSteps}
+            >
+              {isPlaying ? <Pause size={28} fill="black" /> : <Play size={28} fill="black" className="ml-1" />}
+            </button>
+
+            <button
+              onClick={stepForward}
+              className="p-2 border-2 border-black bg-white hover:bg-gray-50 active:translate-y-0.5 transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none rounded-xl"
+              disabled={!hasSteps}
+            >
+              <FastForward size={20} fill="black" />
+            </button>
+          </div>
+        </div>
+
+        {/* Timeline Section */}
+        {hasSteps && (
+          <div className="flex items-center gap-4 px-4 border-l-4 border-black border-dashed min-w-[200px] hidden lg:flex flex-1">
+            <input
+              type="range"
+              min={0}
+              max={Math.max(0, steps.length - 1)}
+              value={currentStepIndex}
+              onChange={(e) => setCurrentStepIndex(parseInt(e.target.value))}
+              className="w-full h-2 bg-gray-200 border-2 border-black rounded-none appearance-none cursor-pointer accent-primary-blue"
+            />
+            <span className="font-black text-[10px] tabular-nums min-w-[60px] text-center">
+              {currentStepIndex} / {steps.length - 1}
+            </span>
+          </div>
+        )}
+
+        {/* Speed Selection Section */}
+        <div className={`flex items-center gap-3 pl-4 md:border-l-4 border-black border-dashed ${!hasSteps ? 'opacity-40 grayscale pointer-events-none' : ''}`}>
+          <span className="font-black text-[10px] uppercase tracking-tighter hidden xl:inline">Speed</span>
+          <select
+            value={speed}
+            onChange={(e) => setSpeed(parseFloat(e.target.value))}
+            className="border-2 border-black p-1 bg-white font-black text-xs outline-none cursor-pointer rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+            disabled={!hasSteps}
+          >
+            <option value={0.5}>0.5x</option>
+            <option value={1}>1.0x</option>
+            <option value={2}>2.0x</option>
+            <option value={4}>4.0x</option>
+          </select>
+        </div>
+
+        {!hasSteps && (
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black text-white px-3 py-1 rounded-full font-black text-[10px] uppercase tracking-widest animate-pulse">
+            Awaiting Algorithm Execution
+          </div>
+        )}
       </div>
     </div>
   );
