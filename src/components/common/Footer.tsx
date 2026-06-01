@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Github, Twitter, Linkedin, Heart } from 'lucide-react';
 
 export const Footer: React.FC = () => {
@@ -19,10 +20,10 @@ export const Footer: React.FC = () => {
           <div>
              <h4 className="font-black uppercase mb-6 text-primary-blue">Explore</h4>
              <ul className="space-y-4 font-bold text-sm">
-                <li><a href="/playground" className="hover:text-primary-yellow transition-colors">Playground</a></li>
-                <li><a href="/learn" className="hover:text-primary-yellow transition-colors">Learning Hub</a></li>
-                <li><a href="/comparison" className="hover:text-primary-yellow transition-colors">Comparison Mode</a></li>
-                <li><a href="/leetcode" className="hover:text-primary-yellow transition-colors">LeetCode Prep</a></li>
+                <li><Link to="/playground" className="hover:text-primary-yellow transition-colors">Playground</Link></li>
+                <li><Link to="/learn-hub" className="hover:text-primary-yellow transition-colors">Learning Hub</Link></li>
+                <li><Link to="/comparison" className="hover:text-primary-yellow transition-colors">Comparison Mode</Link></li>
+                <li><Link to="/leetcode" className="hover:text-primary-yellow transition-colors">LeetCode Prep</Link></li>
              </ul>
           </div>
 
