@@ -15,7 +15,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/playground" element={<Playground />} />
-        <Route path="/learn" element={<LearnPage />} />
+        <Route path="/learn-hub" element={<LearnPage />} />
         <Route path="/comparison" element={<ComparisonPage />} />
         <Route path="/leetcode" element={<LeetCodeMode />} />
         <Route path="/leetcode/islands" element={<IslandsVisualization />} />

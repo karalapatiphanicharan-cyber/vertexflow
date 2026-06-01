@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Play, Search } from 'lucide-react';
 
@@ -22,12 +23,12 @@ export const Hero: React.FC = () => {
             Build. Run. Understand. The ultimate playground for mastering graph theory.
           </p>
           <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
-            <a href="/playground" className="neo-brutal-button bg-primary-blue text-white flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
+            <Link to="/playground" className="neo-brutal-button bg-primary-blue text-white flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
               <Play className="fill-current" size={24} /> Launch Playground
-            </a>
-            <a href="/learn" className="neo-brutal-button bg-white text-black flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
+            </Link>
+            <Link to="/learn-hub" className="neo-brutal-button bg-white text-black flex items-center gap-3 text-2xl py-6 px-10 hover:translate-x-2 hover:translate-y-2 hover:shadow-none transition-all">
               <Search size={24} /> Explore Algorithms
-            </a>
+            </Link>
           </div>
         </motion.div>
 

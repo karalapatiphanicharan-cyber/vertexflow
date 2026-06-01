@@ -20,7 +20,7 @@ export const Navbar: React.FC<NavbarProps> = ({ showLogo = true }) => {
       <div className="hidden lg:flex items-center gap-12 font-black uppercase text-xs tracking-[0.2em]">
         <Link to="/playground" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/playground' ? 'border-primary-blue' : 'border-transparent'}`}>Playground</Link>
         <Link to="/comparison" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/comparison' ? 'border-primary-blue' : 'border-transparent'}`}>Comparison</Link>
-        <Link to="/learn" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/learn' ? 'border-primary-blue' : 'border-transparent'}`}>Learn Hub</Link>
+        <Link to="/learn-hub" className={`hover:text-primary-blue transition-colors border-b-4 ${location.pathname === '/learn-hub' ? 'border-primary-blue' : 'border-transparent'}`}>Learn Hub</Link>
       </div>
 
       <div>
