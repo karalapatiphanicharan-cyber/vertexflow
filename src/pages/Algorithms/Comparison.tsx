@@ -12,7 +12,10 @@ import {
   BarChart3,
   RefreshCw,
   Database,
-  Route
+  Route,
+  CheckCircle2,
+  AlertTriangle,
+  History as HistoryIcon
 } from 'lucide-react';
 import { useComparisonStore } from '../../store/useComparisonStore';
 import ComparisonGraph from '../../components/comparison/ComparisonGraph';
@@ -23,8 +26,34 @@ import { NeoButton } from '../../components/common/NeoButton';
 import { useGraphStore } from '../../store/useGraphStore';
 
 const ComparisonPage: React.FC = () => {
-  const { sideA, sideB, setSideA, setSideB, resetComparison, startSimultaneous, syncFromPlayground } = useComparisonStore();
-  const playgroundNodes = useGraphStore(state => state.nodes);
+  const {
+    sideA,
+    sideB,
+    setSideA,
+    setSideB,
+    resetComparison,
+    startSimultaneous,
+    syncFromPlayground,
+    autoSync,
+    setAutoSync,
+    syncedVersion,
+    lastSyncTime
+  } = useComparisonStore();
+
+  const {
+    nodes: playgroundNodes,
+    edges: playgroundEdges,
+    graphVersion
+  } = useGraphStore();
+
+  const isSynced = graphVersion === syncedVersion;
+
+  // Auto-Sync Logic
+  useEffect(() => {
+    if (autoSync && !isSynced) {
+      syncFromPlayground();
+    }
+  }, [autoSync, graphVersion, syncedVersion, syncFromPlayground]);
 
   // Initialization
   useEffect(() => {
@@ -44,9 +73,11 @@ const ComparisonPage: React.FC = () => {
   };
 
   const handleRunAll = () => {
-    const startNodeId = sideA.nodes[0]?.id || '';
-    const resA = runAlgorithm(sideA.algorithm, sideA.nodes, sideA.edges, false, startNodeId);
-    const resB = runAlgorithm(sideB.algorithm, sideB.nodes, sideB.edges, false, startNodeId);
+    const { isDirected, startNodeId, endNodeId } = useComparisonStore.getState();
+    const effectiveStartId = startNodeId || sideA.nodes[0]?.id || '';
+
+    const resA = runAlgorithm(sideA.algorithm, sideA.nodes, sideA.edges, isDirected, effectiveStartId, endNodeId);
+    const resB = runAlgorithm(sideB.algorithm, sideB.nodes, sideB.edges, isDirected, effectiveStartId, endNodeId);
 
     // Extract Traversal Order
     const getOrder = (steps: any[]) => {
@@ -147,6 +178,48 @@ const ComparisonPage: React.FC = () => {
               </button>
            </div>
         </header>
+
+        {/* Sync Status Panel */}
+        <div className="mb-12 p-6 border-4 border-black bg-gray-50 shadow-brutal rounded-[32px] flex flex-col md:flex-row items-center justify-between gap-8">
+           <div className="flex items-center gap-6">
+              <div className={`flex items-center gap-2 px-4 py-2 border-4 border-black font-black uppercase text-sm ${isSynced ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600 animate-pulse'}`}>
+                 {isSynced ? <CheckCircle2 size={20} /> : <AlertTriangle size={20} />}
+                 {isSynced ? 'Synced' : 'Out of Sync'}
+              </div>
+              <div className="space-y-1">
+                 <div className="flex items-center gap-4 text-[10px] font-black uppercase text-gray-500">
+                    <span className="flex items-center gap-1"><HistoryIcon size={12} /> Last Sync: {lastSyncTime || 'Never'}</span>
+                    <span>Version: {syncedVersion}</span>
+                 </div>
+                 <div className="flex items-center gap-4 text-xs font-black uppercase">
+                    <span>Nodes: {sideA.nodes.length}</span>
+                    <span>Edges: {sideA.edges.length}</span>
+                 </div>
+              </div>
+           </div>
+
+           <div className="flex items-center gap-6 border-l-4 border-black border-dashed pl-8">
+              <label className="flex items-center gap-3 cursor-pointer group">
+                 <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={autoSync}
+                      onChange={(e) => setAutoSync(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-14 h-8 bg-gray-200 border-4 border-black rounded-full peer peer-checked:bg-primary-blue transition-all"></div>
+                    <div className="absolute top-1 left-1 w-4 h-4 bg-black rounded-full transition-all peer-checked:translate-x-6"></div>
+                 </div>
+                 <span className="font-black uppercase text-xs tracking-tight group-hover:text-primary-blue transition-colors">Auto-Sync Playground</span>
+              </label>
+
+              {!isSynced && !autoSync && (
+                <NeoButton onClick={syncFromPlayground} variant="primary" className="py-2 px-4 text-xs">
+                  Sync Now
+                </NeoButton>
+              )}
+           </div>
+        </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 mb-12">
            <ComparisonGraph

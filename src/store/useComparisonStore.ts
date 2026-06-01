@@ -24,9 +24,21 @@ interface ComparisonState {
   sideA: SideState;
   sideB: SideState;
 
+  // Graph Metadata
+  isDirected: boolean;
+  isWeighted: boolean;
+  startNodeId: string;
+  endNodeId: string;
+
+  // Sync State
+  autoSync: boolean;
+  lastSyncTime: string | null;
+  syncedVersion: number;
+
   setSideA: (partial: Partial<SideState>) => void;
   setSideB: (partial: Partial<SideState>) => void;
 
+  setAutoSync: (autoSync: boolean) => void;
   resetComparison: () => void;
   startSimultaneous: () => void;
   stopSimultaneous: () => void;
@@ -56,8 +68,19 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
   sideA: initialSideState([], [], 'bfs'),
   sideB: initialSideState([], [], 'dfs'),
 
+  isDirected: false,
+  isWeighted: false,
+  startNodeId: '',
+  endNodeId: '',
+
+  autoSync: true,
+  lastSyncTime: null,
+  syncedVersion: -1,
+
   setSideA: (partial) => set((state) => ({ sideA: { ...state.sideA, ...partial } })),
   setSideB: (partial) => set((state) => ({ sideB: { ...state.sideB, ...partial } })),
+
+  setAutoSync: (autoSync) => set({ autoSync }),
 
   resetComparison: () => set((state) => ({
     sideA: { ...state.sideA, currentStepIndex: 0, isPlaying: false, steps: [] },
@@ -75,12 +98,34 @@ export const useComparisonStore = create<ComparisonState>((set, get) => ({
   })),
 
   syncFromPlayground: () => {
-    const { nodes, edges } = useGraphStore.getState();
-    const cleanNodes = JSON.parse(JSON.stringify(nodes));
-    const cleanEdges = JSON.parse(JSON.stringify(edges));
+    const { nodes, edges, isDirected, isWeighted, startNodeId, endNodeId, graphVersion } = useGraphStore.getState();
+
+    // Deep clone to ensure total isolation between side A and B
+    const clone = (data: any) => JSON.parse(JSON.stringify(data));
+
     set((state) => ({
-      sideA: { ...state.sideA, nodes: cleanNodes, edges: cleanEdges, steps: [], currentStepIndex: 0 },
-      sideB: { ...state.sideB, nodes: JSON.parse(JSON.stringify(cleanNodes)), edges: JSON.parse(JSON.stringify(cleanEdges)), steps: [], currentStepIndex: 0 }
+      isDirected,
+      isWeighted,
+      startNodeId,
+      endNodeId,
+      syncedVersion: graphVersion,
+      lastSyncTime: new Date().toLocaleTimeString(),
+      sideA: {
+        ...state.sideA,
+        nodes: clone(nodes),
+        edges: clone(edges),
+        steps: [],
+        currentStepIndex: 0,
+        isPlaying: false
+      },
+      sideB: {
+        ...state.sideB,
+        nodes: clone(nodes),
+        edges: clone(edges),
+        steps: [],
+        currentStepIndex: 0,
+        isPlaying: false
+      }
     }));
   }
 }));
