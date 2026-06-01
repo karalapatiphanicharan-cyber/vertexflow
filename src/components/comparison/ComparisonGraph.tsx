@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReactFlowProvider } from '@xyflow/react';
 import GraphCanvas from '../graph/GraphCanvas';
 import { GraphNode, GraphEdge, AlgorithmStep } from '../../types/graph';
 import { Play, Pause, RotateCcw, FastForward, Rewind } from 'lucide-react';
@@ -62,12 +63,14 @@ const ComparisonGraph: React.FC<ComparisonGraphProps> = ({
       </div>
 
       <div className="flex-1 border-4 border-black mb-4 relative min-h-[400px] bg-gray-50">
-        <GraphCanvas
-          nodes={nodes}
-          edges={edges}
-          steps={steps}
-          currentStepIndex={currentStepIndex}
-        />
+        <ReactFlowProvider>
+          <GraphCanvas
+            nodes={nodes}
+            edges={edges}
+            steps={steps}
+            currentStepIndex={currentStepIndex}
+          />
+        </ReactFlowProvider>
       </div>
 
       <div className="flex items-center justify-between">
