@@ -23,6 +23,7 @@ interface GraphState {
   startNodeId: string;
   endNodeId: string;
   autoHideMinimap: boolean;
+  graphVersion: number;
 
   // Actions
   setNodes: (nodes: GraphNode[]) => void;
@@ -67,6 +68,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   edges: [],
   isDirected: false,
   isWeighted: false,
+  graphVersion: 0,
   selectedAlgorithm: 'bfs',
 
   isPlaying: false,
@@ -83,18 +85,19 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   autoHideMinimap: true,
 
   setNodes: (nodes) => {
-    const { startNodeId, endNodeId } = get();
+    const { startNodeId, endNodeId, graphVersion } = get();
     // Validate start/end nodes still exist
     const nodeIds = new Set(nodes.map(n => n.id));
     set({
       nodes,
       startNodeId: nodeIds.has(startNodeId) ? startNodeId : (nodes.length > 0 ? nodes[0].id : ''),
-      endNodeId: nodeIds.has(endNodeId) ? endNodeId : (nodes.length > 1 ? nodes[nodes.length - 1].id : (nodes.length > 0 ? nodes[0].id : ''))
+      endNodeId: nodeIds.has(endNodeId) ? endNodeId : (nodes.length > 1 ? nodes[nodes.length - 1].id : (nodes.length > 0 ? nodes[0].id : '')),
+      graphVersion: graphVersion + 1
     });
   },
-  setEdges: (edges) => set({ edges }),
-  toggleDirected: () => set((state) => ({ isDirected: !state.isDirected })),
-  toggleWeighted: () => set((state) => ({ isWeighted: !state.isWeighted })),
+  setEdges: (edges) => set((state) => ({ edges, graphVersion: state.graphVersion + 1 })),
+  toggleDirected: () => set((state) => ({ isDirected: !state.isDirected, graphVersion: state.graphVersion + 1 })),
+  toggleWeighted: () => set((state) => ({ isWeighted: !state.isWeighted, graphVersion: state.graphVersion + 1 })),
   setSelectedAlgorithm: (selectedAlgorithm) => set({ selectedAlgorithm }),
   setInteractionMode: (interactionMode) => set({ interactionMode }),
   setStartNodeId: (startNodeId) => set({ startNodeId }),
@@ -102,7 +105,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setAutoHideMinimap: (autoHideMinimap) => set({ autoHideMinimap }),
 
   addNode: (position) => {
-    const { nodes } = get();
+    const { nodes, graphVersion } = get();
     const id = (nodes.length === 0) ? 'A' : String.fromCharCode(nodes[nodes.length - 1].id.charCodeAt(0) + 1);
     const safeId = nodes.find(n => n.id === id) ? `Node ${nodes.length + 1}` : id;
 
@@ -112,32 +115,34 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       data: { label: safeId, type: 'default' },
       position
     };
-    set({ nodes: [...nodes, newNode] });
+    set({ nodes: [...nodes, newNode], graphVersion: graphVersion + 1 });
     get().pushHistory();
   },
 
   deleteNode: (id) => {
-    const { nodes, edges, startNodeId, endNodeId } = get();
+    const { nodes, edges, startNodeId, endNodeId, graphVersion } = get();
     const newNodes = nodes.filter(n => n.id !== id);
     set({
       nodes: newNodes,
       edges: edges.filter(e => e.source !== id && e.target !== id),
       startNodeId: startNodeId === id ? (newNodes.length > 0 ? newNodes[0].id : '') : startNodeId,
-      endNodeId: endNodeId === id ? (newNodes.length > 0 ? newNodes[newNodes.length - 1].id : '') : endNodeId
+      endNodeId: endNodeId === id ? (newNodes.length > 0 ? newNodes[newNodes.length - 1].id : '') : endNodeId,
+      graphVersion: graphVersion + 1
     });
     get().pushHistory();
   },
 
   renameNode: (id, label) => {
-    const { nodes } = get();
+    const { nodes, graphVersion } = get();
     set({
-      nodes: nodes.map(n => n.id === id ? { ...n, data: { ...n.data, label } } : n)
+      nodes: nodes.map(n => n.id === id ? { ...n, data: { ...n.data, label } } : n),
+      graphVersion: graphVersion + 1
     });
     get().pushHistory();
   },
 
   addEdge: (source, target) => {
-    const { edges, isWeighted } = get();
+    const { edges, isWeighted, graphVersion } = get();
     const id = `e${source}-${target}`;
     if (edges.find(e => e.id === id)) return;
 
@@ -148,20 +153,21 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       label: isWeighted ? '1' : undefined,
       style: { strokeWidth: 2, stroke: '#000' }
     };
-    set({ edges: [...edges, newEdge] });
+    set({ edges: [...edges, newEdge], graphVersion: graphVersion + 1 });
     get().pushHistory();
   },
 
   deleteEdge: (id) => {
-    const { edges } = get();
-    set({ edges: edges.filter(e => e.id !== id) });
+    const { edges, graphVersion } = get();
+    set({ edges: edges.filter(e => e.id !== id), graphVersion: graphVersion + 1 });
     get().pushHistory();
   },
 
   updateEdgeWeight: (id, weight) => {
-    const { edges } = get();
+    const { edges, graphVersion } = get();
     set({
-      edges: edges.map(e => e.id === id ? { ...e, label: weight } : e)
+      edges: edges.map(e => e.id === id ? { ...e, label: weight } : e),
+      graphVersion: graphVersion + 1
     });
     get().pushHistory();
   },
@@ -173,7 +179,16 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
   resetExecution: () => set({ currentStepIndex: 0, isPlaying: false, steps: [] }),
   clearGraph: () => {
-     set({ nodes: [], edges: [], steps: [], currentStepIndex: 0, isPlaying: false, startNodeId: '', endNodeId: '' });
+     set((state) => ({
+       nodes: [],
+       edges: [],
+       steps: [],
+       currentStepIndex: 0,
+       isPlaying: false,
+       startNodeId: '',
+       endNodeId: '',
+       graphVersion: state.graphVersion + 1
+     }));
      get().pushHistory();
   },
 
