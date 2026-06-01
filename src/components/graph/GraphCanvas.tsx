@@ -59,7 +59,8 @@ const GraphCanvasInternal: React.FC<GraphCanvasProps> = ({
     updateEdgeWeight,
     isWeighted,
     renameNode,
-    deleteNode
+    deleteNode,
+    autoHideMinimap
   } = useGraphStore();
 
   const { screenToFlowPosition } = useReactFlow();
@@ -220,7 +221,9 @@ const GraphCanvasInternal: React.FC<GraphCanvasProps> = ({
         nodesConnectable={interactionMode === 'addEdge'}
       >
         <Controls />
-        <MiniMap />
+        <div className={`transition-all duration-300 ${autoHideMinimap ? 'opacity-20 hover:opacity-100 scale-75 hover:scale-100 origin-bottom-right' : ''}`}>
+          <MiniMap />
+        </div>
         <Background gap={20} size={1} color="#000" />
 
         <Panel position="top-right" className="bg-white py-2 px-4 flex flex-col md:flex-row items-center gap-4 border-4 border-black shadow-brutal rounded-none">

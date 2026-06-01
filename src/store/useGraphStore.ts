@@ -22,6 +22,7 @@ interface GraphState {
   interactionMode: 'pointer' | 'addNode' | 'addEdge';
   startNodeId: string;
   endNodeId: string;
+  autoHideMinimap: boolean;
 
   // Actions
   setNodes: (nodes: GraphNode[]) => void;
@@ -32,6 +33,7 @@ interface GraphState {
   setInteractionMode: (mode: 'pointer' | 'addNode' | 'addEdge') => void;
   setStartNodeId: (id: string) => void;
   setEndNodeId: (id: string) => void;
+  setAutoHideMinimap: (hide: boolean) => void;
 
   // Node/Edge Editing
   addNode: (position: { x: number; y: number }) => void;
@@ -78,6 +80,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   interactionMode: 'pointer',
   startNodeId: '',
   endNodeId: '',
+  autoHideMinimap: true,
 
   setNodes: (nodes) => {
     const { startNodeId, endNodeId } = get();
@@ -96,6 +99,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   setInteractionMode: (interactionMode) => set({ interactionMode }),
   setStartNodeId: (startNodeId) => set({ startNodeId }),
   setEndNodeId: (endNodeId) => set({ endNodeId }),
+  setAutoHideMinimap: (autoHideMinimap) => set({ autoHideMinimap }),
 
   addNode: (position) => {
     const { nodes } = get();
