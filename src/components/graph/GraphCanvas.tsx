@@ -40,7 +40,7 @@ interface GraphCanvasProps {
   fitView?: boolean;
 }
 
-const GraphCanvasInternal: React.FC<GraphCanvasProps> = ({
+const GraphCanvas: React.FC<GraphCanvasProps> = ({
   nodes: inputNodes,
   edges: inputEdges,
   steps = [],
@@ -357,11 +357,5 @@ const GraphCanvasInternal: React.FC<GraphCanvasProps> = ({
     </div>
   );
 };
-
-const GraphCanvas: React.FC<GraphCanvasProps> = (props) => (
-  <ReactFlowProvider>
-    <GraphCanvasInternal {...props} />
-  </ReactFlowProvider>
-);
 
 export default memo(GraphCanvas);

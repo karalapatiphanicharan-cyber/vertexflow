@@ -1,4 +1,5 @@
 import React from 'react';
+import { ReactFlowProvider } from '@xyflow/react';
 import { WorkspaceLayout } from '../../layouts/WorkspaceLayout';
 import GraphCanvas from '../../components/graph/GraphCanvas';
 import { GraphControls } from '../../components/controls/GraphControls';
@@ -16,21 +17,23 @@ const Playground: React.FC = () => {
     <div className="flex flex-col h-screen">
       <Navbar />
       <div className="flex-1 overflow-hidden">
-        <WorkspaceLayout
-          leftSidebar={<GraphControls />}
-          canvas={
-            <>
-              <GraphCanvas
-                nodes={nodes}
-                edges={edges}
-                steps={steps}
-                currentStepIndex={currentStepIndex}
-              />
-              <AnimationControls />
-            </>
-          }
-          rightPanel={<RightPanel />}
-        />
+        <ReactFlowProvider>
+          <WorkspaceLayout
+            leftSidebar={<GraphControls />}
+            canvas={
+              <>
+                <GraphCanvas
+                  nodes={nodes}
+                  edges={edges}
+                  steps={steps}
+                  currentStepIndex={currentStepIndex}
+                />
+                <AnimationControls />
+              </>
+            }
+            rightPanel={<RightPanel />}
+          />
+        </ReactFlowProvider>
       </div>
     </div>
   );
