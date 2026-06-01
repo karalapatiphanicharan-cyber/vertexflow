@@ -143,6 +143,7 @@ Includes:
 ### Deployment
 
 * Vercel
+* Test deployment
 
 ---
 
